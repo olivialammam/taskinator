@@ -43,8 +43,6 @@ var taskFormHandler = function (event) {
     };
 
     createTaskEl(taskDataObj);
-    console.log(taskDataObj);
-    console.log(taskDataObj.status);
 
   }
 
@@ -58,12 +56,13 @@ var completeEditTask = function (taskName, taskType, taskId) {
   taskSelected.querySelector("h3.task-name").textContent = taskName;
   taskSelected.querySelector("span.task-type").textContent = taskType;
   // loop through tasks array and task object with new content
-for (var i = 0; i < tasks.length; i++) {
-  if (tasks[i].id === parseInt(taskId)) {
-    tasks[i].name = taskName;
-    tasks[i].type = taskType;
-  }
-};
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === parseInt(taskId)) {
+      tasks[i].name = taskName;
+      tasks[i].type = taskType;
+    }
+    localStorage.setItem("tasks", tasks);
+  };
 
   alert("Task Updated!");
   //reset tbe form values 
@@ -90,7 +89,9 @@ var createTaskEl = function (taskDataObj) {
 
   taskDataObj.id = taskIdCounter;
 
-tasks.push(taskDataObj);
+  tasks.push(taskDataObj);
+
+  localStorage.setItem("tasks", tasks);
 
   // increase task counter for next unique id
   taskIdCounter++;
@@ -175,28 +176,31 @@ var deleteTask = function (taskId) {
   var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
   console.log(taskSelected);
   taskSelected.remove();
+  localStorage.setItem("tasks", tasks);
+
   // create new array to hold updated list of tasks
-var updatedTaskArr = [];
+  var updatedTaskArr = [];
 
-// loop through current tasks
-for (var i = 0; i < tasks.length; i++) {
-  // if tasks[i].id doesn't match the value of taskId, let's keep that task and push it into the new array
-  if (tasks[i].id !== parseInt(taskId)) {
-    updatedTaskArr.push(tasks[i]);
+  // loop through current tasks
+  for (var i = 0; i < tasks.length; i++) {
+    // if tasks[i].id doesn't match the value of taskId, let's keep that task and push it into the new array
+    if (tasks[i].id !== parseInt(taskId)) {
+      updatedTaskArr.push(tasks[i]);
+    }
   }
-}
 
-// reassign tasks array to be the same as updatedTaskArr
-tasks = updatedTaskArr;
+  // reassign tasks array to be the same as updatedTaskArr
+  tasks = updatedTaskArr;
 };
 
 var taskStatusChangeHandler = function (event) {
-  console.log(event.target.value);
+
 
   for (var i = 0; i < tasks.length; i++) {
     if (tasks[i].id === parseInt(taskId)) {
       tasks[i].status = statusValue;
     }
+    localStorage.setItem("tasks", tasks);
   }
 
   console.log(tasks);
@@ -243,14 +247,18 @@ var tasks = [
 
 var pushedArr = [1, 2, 3];
 
-pushedArr.push(4); 
+pushedArr.push(4);
 // pushedArr is now [1,2,3,4]
 
-pushedArr.push("Taskinator"); 
+pushedArr.push("Taskinator");
 // pushedArr is now [1,2,3,4,"Taskinator"]
 
-pushedArr.push(10, "push", false); 
+pushedArr.push(10, "push", false);
 // pushedArr is now [1,2,3,4,"Taskinator",10,"push",false]
+
+var saveTasks = function () {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
 //EVENT LISTINERS GO HERE 
 
